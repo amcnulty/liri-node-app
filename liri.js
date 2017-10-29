@@ -1,21 +1,9 @@
 var request = require('request');
-var twitter = require('twitter');
+var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 require('dotenv').config();
 var fileSystem = require('fs');
 var keys = require('./keys');
-
-// var spotify = new Spotify({
-    // id: '3565b51d290b4bb0aef69db85339f008',
-    // secret: '633e4f9812c44865bc39e476c13fabcc'
-// });
-
-// var commandMap = {
-//     'my-tweets': 'tweets',
-//     'spotify-this-song': 'spotify',
-//     'movie-this': 'OMDB',
-//     'do-what-it-says': 'storedAction'
-// }
 
 var app = {
     commandMap: {
@@ -34,8 +22,20 @@ var app = {
         id: '3565b51d290b4bb0aef69db85339f008',
         secret: '633e4f9812c44865bc39e476c13fabcc'
     }),
+    twitterHandle: new Twitter({
+        consumer_key: keys.consumer_key,
+        consumer_secret: keys.consumer_secret,
+        access_token_key: keys.access_token_key,
+        access_token_secret: keys.access_token_secret
+    }),
     tweets: function() {
         console.log("TWEETS!");
+        this.twitterHandle.get('statuses/home_timeline', {screen_name: 'elonmusk'}, function(err, tweets, response) {
+            if (err) {
+                console.error(err);
+            }
+            console.log(tweets);
+        });
     },
     spotify: function() {
         var searchObj = {
