@@ -67,3 +67,23 @@ Artist: Zedd
 Song Title: Get Low (with Liam Payne)
 Preview URL: null
 Album Name: Get Low (with Liam Payne)
+
+Artist: Ty Dolla $ign
+Song Title: All The Time
+Preview URL: https://p.scdn.co/mp3-preview/8837af715f030f76a8f6990a51e3ba6cf5155a84?cid=3565b51d290b4bb0aef69db85339f008
+Album Name: Beach House 3
+
+Artist: Ty Dolla $ign
+Preview URL: https://p.scdn.co/mp3-preview/8837af715f030f76a8f6990a51e3ba6cf5155a84?cid=3565b51d290b4bb0aef69db85339f008
+Album Name: Beach House 3
+Song Title: All The Time
+
+Artist: Ace of Base
+Song Title: The Sign
+Preview URL: https://p.scdn.co/mp3-preview/4c463359f67dd3546db7294d236dd0ae991882ff?cid=3565b51d290b4bb0aef69db85339f008
+Album Name: The Sign (US Album) [Remastered]
+
+Artist: Ace of Base
+Preview URL: https://p.scdn.co/mp3-preview/4c463359f67dd3546db7294d236dd0ae991882ff?cid=3565b51d290b4bb0aef69db85339f008
+Album Name: The Sign (US Album) [Remastered]
+Song Title: The Sign

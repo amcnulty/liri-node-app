@@ -2,6 +2,7 @@ var request = require('request');
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 require('dotenv').config();
+var pjson = require('./package.json');
 var fileSystem = require('fs');
 var keys = require('./keys');
 
@@ -14,10 +15,13 @@ var app = {
         '-help': 'help',
         '--help': 'help',
         '-h': 'help',
-        '--h': 'help'
+        '--h': 'help',
+        '-v': 'version',
+        '--version': 'version'
     },
     command: process.argv[2],
     nameValue: undefined,
+    versionNumber: pjson.version,
     spotifyHandle: new Spotify({
         id: '3565b51d290b4bb0aef69db85339f008',
         secret: '633e4f9812c44865bc39e476c13fabcc'
@@ -46,7 +50,7 @@ var app = {
     spotify: function() {
         var searchObj = {
             type: 'track',
-            query: this.nameValue,
+            query: this.nameValue === '' ? 'The Sign Ace of Base' : this.nameValue,
             limit: 1
         };
         this.spotifyHandle.search(searchObj, function(err, data) {
@@ -272,7 +276,20 @@ var app = {
         console.log("I DON'T GET IT");
     },
     help: function() {
-        console.log("HELP ON USING THIS APP!");
+        console.log("\n------------------------------------------------------------------------------------------");
+        console.log("  Liri.js is a language interpretation and recognition interface used to gather\n  information about movies, songs, and recent tweets.");
+        console.log("------------------------------------------------------------------------------------------");
+        console.log("\nUsage: $ node liri.js [command] [name value]");
+        console.log("\n\nCommands:");
+        console.log("  -h, --h, -help, --help\t\tDisplay help information.");
+        console.log("  -v, --version\t\t\t\tDisplays current liri.js version.");
+        console.log("  my-tweets\t\t\t\tReturns last twenty tweets from Aaron Michael McNulty.");
+        console.log("  spotify-this-song [name value]\tReturns song information for provided name value.");
+        console.log("  movie-this [name value]\t\tReturns movie information for provided name value.");
+        console.log("  do-what-it-says\t\t\tRuns the command that is stored in random.txt");
+    },
+    version: function() {
+        console.log("\n  Liri.js v" + this.versionNumber);
     },
     requestData: function(uri, callback) {
         request(uri, function(err, response, body) {
