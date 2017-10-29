@@ -47,14 +47,54 @@ var app = {
         }
     },
     displayMovieInfo: function(movie) {
-        console.log("\n\nMovie Title: " + movie.Title);
-        console.log("Release Year: " + movie.Year);
-        console.log("IMBD Rating: " + movie.Ratings[0].Value);
-        console.log("Rotten Tomatoes Rating: " + movie.Ratings[1].Value);
-        console.log("Country of production: " + movie.Country);
-        console.log("Languages: " + movie.Language);
-        console.log("Plot: " + movie.Plot);
-        console.log("Actors: " + movie.Actors);
+        try {
+            console.log("\n\nMovie Title: " + movie.Title);
+        }
+        catch (e) {
+            console.log("\n\nMovie Title: n/a");
+        }
+        try {
+            console.log("Release Year: " + movie.Year);
+        }
+        catch (e) {
+            console.log("Release Year: n/a");
+        }
+        try {
+            console.log("IMBD Rating: " + movie.Ratings[0].Value);
+        }
+        catch (e) {
+            console.log("IMBD Rating: n/a");
+        }
+        try {
+            console.log("Rotten Tomatoes Rating: " + movie.Ratings[1].Value);
+        }
+        catch (e) {
+            console.log("Rotten Tomatoes Rating: n/a");
+        }
+        try {
+            console.log("Country of production: " + movie.Country);
+        }
+        catch (e) {
+            console.log("Country of production: n/a");
+        }
+        try {
+            console.log("Languages: " + movie.Language);
+        }
+        catch (e) {
+            console.log("Languages: n/a");
+        }
+        try {
+            console.log("Plot: " + movie.Plot);
+        }
+        catch (e) {
+            console.log("Plot: n/a");
+        }
+        try {
+            console.log("Actors: " + movie.Actors);
+        }
+        catch (e) {
+            console.log("Actors: n/a");
+        }
     },
     storedAction: function() {
         console.log("I DON'T GET IT");
