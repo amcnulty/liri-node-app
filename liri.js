@@ -30,11 +30,16 @@ var app = {
     }),
     tweets: function() {
         console.log("TWEETS!");
-        this.twitterHandle.get('statuses/home_timeline', {screen_name: 'elonmusk'}, function(err, tweets, response) {
+        var params = {
+            exclude_replies: true,
+            count: 20,
+            user_id: 'amcnulty88'
+        }
+        this.twitterHandle.get('statuses/user_timeline', params, function(err, tweets, response) {
             if (err) {
                 console.error(err);
             }
-            console.log(tweets);
+            console.log(tweets.length);
         });
     },
     spotify: function() {
