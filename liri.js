@@ -32,14 +32,15 @@ var app = {
         console.log("TWEETS!");
         var params = {
             exclude_replies: true,
-            count: 20,
+            count: 500,
+            include_rts: 1,
             user_id: 'amcnulty88'
         }
         this.twitterHandle.get('statuses/user_timeline', params, function(err, tweets, response) {
             if (err) {
                 console.error(err);
             }
-            console.log(tweets.length);
+            console.log(tweets.splice(0,20).length);
         });
     },
     spotify: function() {
