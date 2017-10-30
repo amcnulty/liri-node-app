@@ -39,6 +39,7 @@ var errorColor = chalk.hex('FF0000');
 var headingColor = chalk.hex('00FF00');
 var labelColor = chalk.hex('FF00FF');
 var blue = chalk.hex('0000FF');
+var optionalColor = chalk.keyword('cyan');
 /**
  * The app object contains all the properties and methods associated with the functionality
  * of the application.
@@ -377,17 +378,17 @@ var app = {
      * @since 1.0.0
      */
     help: function() {
-        console.log("\n------------------------------------------------------------------------------------------");
-        console.log("  Liri.js is a language interpretation and recognition interface used to gather\n  information about movies, songs, and recent tweets.");
-        console.log("------------------------------------------------------------------------------------------");
-        console.log("\nUsage: $ node liri.js [command] [name value]");
-        console.log("\n\nCommands:");
-        console.log("  -h, --h, -help, --help\t\tDisplay help information.");
-        console.log("  -v, --version\t\t\t\tDisplays current liri.js version.");
-        console.log("  my-tweets\t\t\t\tReturns last twenty tweets from Aaron Michael McNulty.");
-        console.log("  spotify-this-song [name value]\tReturns song information for provided name value.");
-        console.log("  movie-this [name value]\t\tReturns movie information for provided name value.");
-        console.log("  do-what-it-says\t\t\tRuns the command that is stored in random.txt");
+        log(blue("\n------------------------------------------------------------------------------------------"));
+        log(headingColor("  Liri.js is a language interpretation and recognition interface used to gather\n  information about movies, songs, and recent tweets."));
+        log(blue("------------------------------------------------------------------------------------------"));
+        log(labelColor("\nUsage:") + " $ node liri.js [" + optionalColor("command") + "] [" + optionalColor("name value") + "]");
+        log(labelColor("\n\nCommands:"));
+        log("  -h, --h, -help, --help\t\tDisplay help information.");
+        log("  -v, --version\t\t\t\tDisplays current liri.js version.");
+        log("  my-tweets\t\t\t\tReturns last twenty tweets from Aaron Michael McNulty.");
+        log("  spotify-this-song [" + optionalColor("name value") + "]\tReturns song information for provided name value.");
+        log("  movie-this [" + optionalColor("name value") + "]\t\tReturns movie information for provided name value.");
+        log("  do-what-it-says\t\t\tRuns the command that is stored in random.txt");
     },
     /**
      * Executed by the -v and --version commands. Displays the current build version
@@ -396,7 +397,7 @@ var app = {
      * @since 1.0.0
      */
     version: function() {
-        console.log("\n  Liri.js v" + this.versionNumber);
+        log(labelColor("\n  Liri.js") + blue(" v") + this.versionNumber);
     },
     /**
      * Generic request function for querying any URI. The response information is returned.
