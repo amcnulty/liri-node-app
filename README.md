@@ -16,8 +16,15 @@ There is currently no installer for LiriJS so you must get the code and run the 
 2. Download the repository as a zip file to your computer.
   * ![Download This Repo](https://raw.githubusercontent.com/amcnulty/liri-node-app/master/readme_res/download.JPG "Download This Repo")
 
+### Install Dependencies
+Once the code is installed on your computer navigate to root of the project in a bash/terminal/command prompt of your choice. Run the following node command to install the required dependencies.
+
+```
+$ npm install
+```
+
 ### Run LiriJS
-Once the code is installed on your computer navigate to root of the project in a bash/terminal/command prompt of your choice. Run the following node command to test if your are able to run LiriJS.
+Once the dependencies have finished installing run the following node command to test if your are able to run LiriJS.
 
 ```
 $ node liri.js --version
