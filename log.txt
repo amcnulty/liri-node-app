@@ -87,3 +87,21 @@ Artist: Ace of Base
 Preview URL: https://p.scdn.co/mp3-preview/4c463359f67dd3546db7294d236dd0ae991882ff?cid=3565b51d290b4bb0aef69db85339f008
 Album Name: The Sign (US Album) [Remastered]
 Song Title: The Sign
+
+Movie Title: Out Cold
+Release Year: 2001
+IMBD Rating: 6.3/10
+Rotten Tomatoes Rating: 8%
+Country of production: USA
+Plot: A snowboarder's plans for his own snowboard park go awry when an ex-girlfriend returns to town.
+Actors: Flex Alexander, A.J. Cook, David Denman, Caroline Dhavernas
+Languages: English
+
+Movie Title: Out Cold
+Release Year: 2001
+IMDB Rating: 6.3/10
+Rotten Tomatoes Rating: 8%
+Country of production: USA
+Languages: English
+Plot: A snowboarder's plans for his own snowboard park go awry when an ex-girlfriend returns to town.
+Actors: Flex Alexander, A.J. Cook, David Denman, Caroline Dhavernas

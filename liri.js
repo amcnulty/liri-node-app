@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var request = require('request');
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
@@ -33,7 +35,6 @@ var app = {
         access_token_secret: keys.access_token_secret
     }),
     tweets: function() {
-        console.log("TWEETS!");
         var params = {
             exclude_replies: true,
             count: 500,
@@ -44,8 +45,28 @@ var app = {
             if (err) {
                 console.error(err);
             }
-            console.log(tweets.splice(0,20).length);
+            app.displayTweets(tweets.splice(0,20));
         });
+    },
+    displayTweets: function(tweets) {
+        for (var i = 0; i < tweets.length; i++) {
+            var tweetString = tweets[i].text;
+            tweetString = app.tweetFormatter(tweetString);
+            console.log("\n-------------------------------------------------------------------------------------------------");
+            console.log("  Tweet:\t" + tweetString + '\n');
+            console.log("  Created on:\t" + tweets[i].created_at);
+            console.log("\n-------------------------------------------------------------------------------------------------");
+        }
+    },
+    tweetFormatter: function(tweet) {
+        for (var i = 80; i > 0; i--) {
+            if (tweet.charAt(i) === ' ') {
+                var firstHalf = tweet.substring(0, i + 1);
+                var secondHalf = tweet.substring(i + 1, tweet.length);
+                firstHalf += '\n\t\t';
+                return firstHalf + secondHalf;
+            }
+        }
     },
     spotify: function() {
         var searchObj = {
@@ -176,16 +197,16 @@ var app = {
             });
         }
         try {
-            console.log("IMBD Rating: " + movie.Ratings[0].Value);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nIMBD Rating: " + movie.Ratings[0].Value, function(err) {
+            console.log("IMDB Rating: " + movie.Ratings[0].Value);
+            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nIMDB Rating: " + movie.Ratings[0].Value, function(err) {
                 if (err) {
                     console.error(err);
                 }
             });
         }
         catch (e) {
-            console.log("IMBD Rating: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nIMBD Rating: n/a", function(err) {
+            console.log("IMDB Rating: n/a");
+            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nIMDB Rating: n/a", function(err) {
                 if (err) {
                     console.error(err);
                 }
