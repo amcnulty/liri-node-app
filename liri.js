@@ -170,70 +170,90 @@ var app = {
         })
     },
     /**
-     * Displays the song info to the console and to the log.txt file.
+     * Displays the song info to the console and to the log.txt file. If no data is
+     * provided from the query n/a is displayed in place of the data.
      * 
+     * @since 1.0.0
      * @param song {JSON} - Song data from the Spotify API
      */
     displaySongInfo: function(song) {
         try {
-            appendFileWithData("\n\nArtist: ", song.tracks.items[0].artists[0].name);
-            printToConsole("\n\nArtist: ", song.tracks.items[0].artists[0].name);
+            app.appendFile("\n\nArtist: ", song.tracks.items[0].artists[0].name);
+            app.printToConsole("\n\n  Artist: ", song.tracks.items[0].artists[0].name);
         }
         catch (e) {
-            console.log(e);
-            appendFileNoData("\n\nArtist: n/a");
-            printToConsole("\n\nArtist: n/a", '');
+            app.appendFile("\n\nArtist: ", "n/a");
+            app.printToConsole("\n\n  Artist: ", "n/a");
         }
         try {
-            appendFileWithData("Song Title: ", song.tracks.items[0].name);
-            printToConsole("Song Title: ", song.tracks.items[0].name);
+            app.appendFile("Song Title: ", song.tracks.items[0].name);
+            app.printToConsole("  Song Title: ", song.tracks.items[0].name);
         }
         catch (e) {
-            appendFileNoData("Song Title: n/a");
-            printToConsole("Song Title: n/a", '');
+            app.appendFile("Song Title: ", "n/a");
+            app.printToConsole("  Song Title: ", "n/a");
         }
         try {
-            appendFileWithData("Preview URL: ", song.tracks.items[0].preview_url);
-            printToConsole("Preview URL: ", song.tracks.items[0].preview_url);
+            app.appendFile("Preview URL: ", song.tracks.items[0].preview_url);
+            app.printToConsole("  Preview URL: ", song.tracks.items[0].preview_url);
         }
         catch (e) {
-            appendFileNoData("Preview URL: n/a");
-            printToConsole("Preview URL: n/a", '');
+            app.appendFile("Preview URL: ", "n/a");
+            app.printToConsole("  Preview URL: ", "n/a");
         }
         
         try {
-            appendFileWithData("Album Name: ", song.tracks.items[0].album.name);
-            printToConsole("Album Name: ", song.tracks.items[0].album.name);
+            app.appendFile("Album Name: ", song.tracks.items[0].album.name);
+            app.printToConsole("  Album Name: ", song.tracks.items[0].album.name);
         }
         catch (e) {
-            appendFileNoData("Album Name: n/a");
-            printToConsole("Album Name: n/a", '');
-        }
-        function printToConsole(label, data) {
-            console.log(label + data);
-        }
-        function appendFileNoData(label) {
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n" + label, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
-        }
-        function appendFileWithData(label, data) {
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n" + label + data, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Album Name: ", "n/a");
+            app.printToConsole("  Album Name: ", "n/a");
         }
     },
-    OMDB: function() {
-        var movieData;
-        this.requestData(this.buildUri(), function(res) {
-            movieData = res;
-            app.displayMovieInfo(movieData);
+    /**
+     * Logs output to the console with a label and data.
+     * 
+     * @param {String} label - The label of what the data represents.
+     * @param {String} data - The data to be displayed.
+     */
+    printToConsole: function(label, data) {
+        console.log(label + data);
+    },
+    /**
+     * Logs output to the log.txt file with a label and data.
+     * 
+     * @param {String} label - The label of what the data represents.
+     * @param {String} data - The data to be displayed.
+     */
+    appendFile(label, data) {
+        fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n" + label + data, function(err) {
+            if (err) {
+                console.error(err);
+            }
         });
     },
+    /**
+     * Executed by the movie-this command. Uses the request npm module to request data
+     * from the OMDB API. After request has finished this method calls displayMovieInfo.
+     * 
+     * @since 1.0.0
+     * @fires app.buildUri()
+     * @fires app.displayMovieInfo()
+     */
+    OMDB: function() {
+        this.requestData(this.buildUri(), function(res) {
+            app.displayMovieInfo(res);
+        });
+    },
+    /**
+     * Checks if the app.nameValue variable has a string to build a proper URI for
+     * querying the OMDB database. If the nameValue is empty an alert is print to the
+     * console and the app closes.
+     * 
+     * @since 1.0.0
+     * @returns {String}
+     */
     buildUri: function() {
         if (this.nameValue === '') {
             console.log("\n\nYou have not supplied a name value for this command!\n\nTry <node liri.js -help> for information on using this app.");
@@ -243,145 +263,106 @@ var app = {
             return 'http://www.omdbapi.com/?apikey=40e9cece&t=' + this.nameValue;
         }
     },
+    /**
+     * Displays the movie info to the console and to the log.txt file. If no data is
+     * provided from the query n/a is displayed in place of the data.
+     * 
+     * @since 1.0.0
+     * @param movie {JSON} - Data from the OMDB API about the movie to be displayed.
+     */
     displayMovieInfo: function(movie) {
         try {
-            console.log("\n\nMovie Title: " + movie.Title);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n\nMovie Title: " + movie.Title, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("\nMovie Title: ", movie.Title);
+            app.printToConsole("\n\n  Movie Title: ", movie.Title);
         }
         catch (e) {
-            console.log("\n\nMovie Title: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n\nMovie Title: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("\nMovie Title: ", "n/a");
+            app.printToConsole("\n\n  Movie Title: " , "n/a");
         }
         try {
-            console.log("Release Year: " + movie.Year);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nRelease Year: " + movie.Year, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Release Year: ", movie.Year);
+            app.printToConsole("  Release Year: ", movie.Year);
         }
         catch (e) {
-            console.log("Release Year: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nRelease Year: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Release Year: ", "n/a");
+            app.printToConsole("  Release Year: ", "n/a");
         }
         try {
-            console.log("IMDB Rating: " + movie.Ratings[0].Value);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nIMDB Rating: " + movie.Ratings[0].Value, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("IMDB Rating: ", movie.Ratings[0].Value);
+            app.printToConsole("  IMDB Rating: ", movie.Ratings[0].Value);
         }
         catch (e) {
-            console.log("IMDB Rating: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nIMDB Rating: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("IMDB Rating: ", "n/a");
+            app.printToConsole("  IMDB Rating: ", "n/a");
         }
         try {
-            console.log("Rotten Tomatoes Rating: " + movie.Ratings[1].Value);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nRotten Tomatoes Rating: " + movie.Ratings[1].Value, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Rotten Tomatoes Rating: ", movie.Ratings[1].Value);
+            app.printToConsole("  Rotten Tomatoes Rating: ", movie.Ratings[1].Value);
         }
         catch (e) {
-            console.log("Rotten Tomatoes Rating: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nRotten Tomatoes Rating: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Rotten Tomatoes Rating: ", "n/a");
+            app.printToConsole("  Rotten Tomatoes Rating: ", "n/a");
         }
         try {
-            console.log("Country of production: " + movie.Country);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nCountry of production: " + movie.Country, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Country of production: ", movie.Country);
+            app.printToConsole("  Country of production: ", movie.Country);
         }
         catch (e) {
-            console.log("Country of production: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nCountry of production: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Country of production: ", "n/a");
+            app.printToConsole("  Country of production: ", "n/a");
         }
         try {
-            console.log("Languages: " + movie.Language);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nLanguages: " + movie.Language, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Languages: ", movie.Language);
+            app.printToConsole("  Languages: ", movie.Language);
         }
         catch (e) {
-            console.log("Languages: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nLanguages: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Languages: ", "n/a");
+            app.printToConsole("  Languages: ", "n/a");
         }
         try {
-            console.log("Plot: " + movie.Plot);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nPlot: " + movie.Plot, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Plot: ", movie.Plot);
+            app.printToConsole("  Plot: ", movie.Plot);
         }
         catch (e) {
-            console.log("Plot: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nPlot: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Plot: ", "n/a");
+            app.printToConsole("  Plot: ", "n/a");
         }
         try {
-            console.log("Actors: " + movie.Actors);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nActors: " + movie.Actors, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Actors: ", movie.Actors);
+            app.printToConsole("  Actors: ", movie.Actors);
         }
         catch (e) {
-            console.log("Actors: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nActors: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            app.appendFile("Actors: ", "n/a");
+            app.printToConsole("  Actors: ", "n/a");
         }
     },
+    /**
+     * Executed by the do-what-it-says command. Runs the command that is in the
+     * random.txt file.
+     * 
+     * @since 1.0.0
+     * @fires app.runCommand()
+     */
     storedAction: function() {
         fileSystem.readFile('./random.txt', 'utf8', function(err, data) {
             if (err) {
                 console.error(err);
             }
             var commandAndNameArray = data.split(',');
-            app.runCommand(commandAndNameArray[0], commandAndNameArray[1]);
+            try {
+                app.runCommand(commandAndNameArray[0], commandAndNameArray[1]);
+            }
+            catch (e) {
+                console.log("\n\n" + commandAndNameArray[0] + " is not a valid command!\n\nTry <node liri.js -help> for information on using this app.");
+            }
         });
     },
+    /**
+     * Executed by the -h, --h, -help, and --help commands. Displays help information
+     * to the console about commands and their usage.
+     * 
+     * @since 1.0.0
+     */
     help: function() {
         console.log("\n------------------------------------------------------------------------------------------");
         console.log("  Liri.js is a language interpretation and recognition interface used to gather\n  information about movies, songs, and recent tweets.");
@@ -395,9 +376,23 @@ var app = {
         console.log("  movie-this [name value]\t\tReturns movie information for provided name value.");
         console.log("  do-what-it-says\t\t\tRuns the command that is stored in random.txt");
     },
+    /**
+     * Executed by the -v and --version commands. Displays the current build version
+     * of LiriJS to the console.
+     * 
+     * @since 1.0.0
+     */
     version: function() {
         console.log("\n  Liri.js v" + this.versionNumber);
     },
+    /**
+     * Generic request function for querying any URI. The response information is returned.
+     * 
+     * @since 1.0.0
+     * @param uri {String} - The URI to send the request to.
+     * @param callback {Function} - Called when response is received.
+     * @callback A JSON object is passed to the callback containing the response body.
+     */
     requestData: function(uri, callback) {
         request(uri, function(err, response, body) {
             if (err) {
@@ -408,12 +403,19 @@ var app = {
             }
         })
     },
+    /**
+     * Runs a command from the command map.
+     * 
+     * @since 1.0.0
+     * @param command {String} - The command to be run.
+     * @param value {String} - The name value associated with the command.
+     */
     runCommand: function(command, value) {
         app.nameValue = value;
         app[app.commandMap[command]]();
     }
 }
-
+// Checks if user has entered a command and or name value before calling app.runCommand()
 if (app.command === undefined) console.log("\n\nYou have not specified a command!\n\nTry <node liri.js -help> for information on using this app.");
 else if (app.commandMap[app.command] === undefined) console.log("\n\n" + app.command + " is not a valid command!\n\nTry <node liri.js -help> for information on using this app.");
 else app.runCommand(app.command, process.argv.splice(3, process.argv.length).join(" "));
