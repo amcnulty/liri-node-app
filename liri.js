@@ -27,10 +27,18 @@
 var request = require('request');
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
+var chalk = require('chalk');
 require('dotenv').config();
 var pjson = require('./package.json');
 var fileSystem = require('fs');
 var keys = require('./keys');
+// Shorthand for logging to the console.
+var log = console.log;
+// Color constants to be used by the chalk npm module
+var errorColor = chalk.hex('FF0000');
+var headingColor = chalk.hex('00FF00');
+var labelColor = chalk.hex('FF00FF');
+var blue = chalk.hex('0000FF');
 /**
  * The app object contains all the properties and methods associated with the functionality
  * of the application.
@@ -121,9 +129,10 @@ var app = {
     displayTweets: function(tweets) {
         for (var i = 0; i < tweets.length; i++) {
             var tweetString = tweets[i].text;
-            tweetString = app.tweetFormatter(tweetString);
+            tweetString = app.stringFormatter(tweetString, 2);
+            var consoleOutput = blue("\n-------------------------------------------------------------------------------------------------\n") + labelColor("  Tweet:\t") + tweetString + labelColor("\n\n  Created on:\t") + tweets[i].created_at + blue("\n\n-------------------------------------------------------------------------------------------------");
             var output = "\n-------------------------------------------------------------------------------------------------\n  Tweet:\t" + tweetString + "\n\n  Created on:\t" + tweets[i].created_at + "\n\n-------------------------------------------------------------------------------------------------";
-            console.log(output);
+            log(consoleOutput);
             fileSystem.appendFile(process.env.LOG_PATH || "log.txt", output, function(err) {
                 if (err) {
                     console.error(err);
@@ -137,14 +146,18 @@ var app = {
      * 
      * @since 1.0.0
      * @param tweet {String} - The string to be formatted.
+     * @param tabs {Number} - The number of tabs to add after the newline is added.
      * @returns {String}
      */
-    tweetFormatter: function(tweet) {
+    stringFormatter: function(tweet, tabs) {
         for (var i = 80; i > 0; i--) {
             if (tweet.charAt(i) === ' ') {
                 var firstHalf = tweet.substring(0, i + 1);
                 var secondHalf = tweet.substring(i + 1, tweet.length);
-                firstHalf += '\n\t\t';
+                firstHalf += '\n';
+                for (var i = 0; i < tabs; i++) {
+                    firstHalf += '\t';
+                }
                 return firstHalf + secondHalf;
             }
         }
@@ -179,36 +192,36 @@ var app = {
     displaySongInfo: function(song) {
         try {
             app.appendFile("\n\nArtist: ", song.tracks.items[0].artists[0].name);
-            app.printToConsole("\n\n  Artist: ", song.tracks.items[0].artists[0].name);
+            app.printToConsole("\n\n  Artist:\t\t", song.tracks.items[0].artists[0].name);
         }
         catch (e) {
             app.appendFile("\n\nArtist: ", "n/a");
-            app.printToConsole("\n\n  Artist: ", "n/a");
+            app.printToConsole("\n\n  Artist:\t\t", "n/a");
         }
         try {
             app.appendFile("Song Title: ", song.tracks.items[0].name);
-            app.printToConsole("  Song Title: ", song.tracks.items[0].name);
+            app.printToConsole("  Song Title:\t\t", song.tracks.items[0].name);
         }
         catch (e) {
             app.appendFile("Song Title: ", "n/a");
-            app.printToConsole("  Song Title: ", "n/a");
+            app.printToConsole("  Song Title:\t\t", "n/a");
         }
         try {
             app.appendFile("Preview URL: ", song.tracks.items[0].preview_url);
-            app.printToConsole("  Preview URL: ", song.tracks.items[0].preview_url);
+            app.printToConsole("  Preview URL:\t\t", song.tracks.items[0].preview_url);
         }
         catch (e) {
             app.appendFile("Preview URL: ", "n/a");
-            app.printToConsole("  Preview URL: ", "n/a");
+            app.printToConsole("  Preview URL:\t\t", "n/a");
         }
         
         try {
             app.appendFile("Album Name: ", song.tracks.items[0].album.name);
-            app.printToConsole("  Album Name: ", song.tracks.items[0].album.name);
+            app.printToConsole("  Album Name:\t\t", song.tracks.items[0].album.name);
         }
         catch (e) {
             app.appendFile("Album Name: ", "n/a");
-            app.printToConsole("  Album Name: ", "n/a");
+            app.printToConsole("  Album Name:\t\t", "n/a");
         }
     },
     /**
@@ -218,7 +231,7 @@ var app = {
      * @param {String} data - The data to be displayed.
      */
     printToConsole: function(label, data) {
-        console.log(label + data);
+        log(labelColor(label) + data);
     },
     /**
      * Logs output to the log.txt file with a label and data.
@@ -273,67 +286,67 @@ var app = {
     displayMovieInfo: function(movie) {
         try {
             app.appendFile("\nMovie Title: ", movie.Title);
-            app.printToConsole("\n\n  Movie Title: ", movie.Title);
+            app.printToConsole("\n\n  Movie Title:\t\t\t", movie.Title);
         }
         catch (e) {
             app.appendFile("\nMovie Title: ", "n/a");
-            app.printToConsole("\n\n  Movie Title: " , "n/a");
+            app.printToConsole("\n\n  Movie Title:\t\t\t" , "n/a");
         }
         try {
             app.appendFile("Release Year: ", movie.Year);
-            app.printToConsole("  Release Year: ", movie.Year);
+            app.printToConsole("  Release Year:\t\t\t", movie.Year);
         }
         catch (e) {
             app.appendFile("Release Year: ", "n/a");
-            app.printToConsole("  Release Year: ", "n/a");
+            app.printToConsole("  Release Year:\t\t\t", "n/a");
         }
         try {
             app.appendFile("IMDB Rating: ", movie.Ratings[0].Value);
-            app.printToConsole("  IMDB Rating: ", movie.Ratings[0].Value);
+            app.printToConsole("  IMDB Rating:\t\t\t", movie.Ratings[0].Value);
         }
         catch (e) {
             app.appendFile("IMDB Rating: ", "n/a");
-            app.printToConsole("  IMDB Rating: ", "n/a");
+            app.printToConsole("  IMDB Rating:\t\t\t", "n/a");
         }
         try {
             app.appendFile("Rotten Tomatoes Rating: ", movie.Ratings[1].Value);
-            app.printToConsole("  Rotten Tomatoes Rating: ", movie.Ratings[1].Value);
+            app.printToConsole("  Rotten Tomatoes Rating:\t", movie.Ratings[1].Value);
         }
         catch (e) {
             app.appendFile("Rotten Tomatoes Rating: ", "n/a");
-            app.printToConsole("  Rotten Tomatoes Rating: ", "n/a");
+            app.printToConsole("  Rotten Tomatoes Rating:\t", "n/a");
         }
         try {
             app.appendFile("Country of production: ", movie.Country);
-            app.printToConsole("  Country of production: ", movie.Country);
+            app.printToConsole("  Country of production:\t", movie.Country);
         }
         catch (e) {
             app.appendFile("Country of production: ", "n/a");
-            app.printToConsole("  Country of production: ", "n/a");
+            app.printToConsole("  Country of production:\t", "n/a");
         }
         try {
             app.appendFile("Languages: ", movie.Language);
-            app.printToConsole("  Languages: ", movie.Language);
+            app.printToConsole("  Languages:\t\t\t", movie.Language);
         }
         catch (e) {
             app.appendFile("Languages: ", "n/a");
-            app.printToConsole("  Languages: ", "n/a");
+            app.printToConsole("  Languages:\t\t\t", "n/a");
         }
         try {
             app.appendFile("Plot: ", movie.Plot);
-            app.printToConsole("  Plot: ", movie.Plot);
+            app.printToConsole("  Plot:\t\t\t\t", app.stringFormatter(movie.Plot, 4));
         }
         catch (e) {
             app.appendFile("Plot: ", "n/a");
-            app.printToConsole("  Plot: ", "n/a");
+            app.printToConsole("  Plot:\t\t\t\t", "n/a");
         }
         try {
             app.appendFile("Actors: ", movie.Actors);
-            app.printToConsole("  Actors: ", movie.Actors);
+            app.printToConsole("  Actors:\t\t\t", movie.Actors);
         }
         catch (e) {
             app.appendFile("Actors: ", "n/a");
-            app.printToConsole("  Actors: ", "n/a");
+            app.printToConsole("  Actors:\t\t\t", "n/a");
         }
     },
     /**
@@ -346,14 +359,14 @@ var app = {
     storedAction: function() {
         fileSystem.readFile('./random.txt', 'utf8', function(err, data) {
             if (err) {
-                console.error(err);
+                console.error(errorColor(err));
             }
             var commandAndNameArray = data.split(',');
             try {
                 app.runCommand(commandAndNameArray[0], commandAndNameArray[1]);
             }
             catch (e) {
-                console.log("\n\n" + commandAndNameArray[0] + " is not a valid command!\n\nTry <node liri.js -help> for information on using this app.");
+                log(errorColor("\n\n" + commandAndNameArray[0] + " is not a valid command!\n\nTry <node liri.js -help> for information on using this app."));
             }
         });
     },
@@ -416,6 +429,6 @@ var app = {
     }
 }
 // Checks if user has entered a command and or name value before calling app.runCommand()
-if (app.command === undefined) console.log("\n\nYou have not specified a command!\n\nTry <node liri.js -help> for information on using this app.");
-else if (app.commandMap[app.command] === undefined) console.log("\n\n" + app.command + " is not a valid command!\n\nTry <node liri.js -help> for information on using this app.");
+if (app.command === undefined) log(errorColor("\n\nYou have not specified a command!\n\nTry <node liri.js -help> for information on using this app."));
+else if (app.commandMap[app.command] === undefined) log(errorColor("\n\n" + app.command + " is not a valid command!\n\nTry <node liri.js -help> for information on using this app."));
 else app.runCommand(app.command, process.argv.splice(3, process.argv.length).join(" "));
