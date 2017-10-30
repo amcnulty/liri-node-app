@@ -145,7 +145,7 @@ var app = {
      * Formats a string by adding a new line at no further than index 80 at the space
      * nearest to and less than index 80.
      * 
-     * @since 1.0.0
+     * @since 1.1.2
      * @param tweet {String} - The string to be formatted.
      * @param tabs {Number} - The number of tabs to add after the newline is added.
      * @returns {String}
