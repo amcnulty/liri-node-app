@@ -52,10 +52,13 @@ var app = {
         for (var i = 0; i < tweets.length; i++) {
             var tweetString = tweets[i].text;
             tweetString = app.tweetFormatter(tweetString);
-            console.log("\n-------------------------------------------------------------------------------------------------");
-            console.log("  Tweet:\t" + tweetString + '\n');
-            console.log("  Created on:\t" + tweets[i].created_at);
-            console.log("\n-------------------------------------------------------------------------------------------------");
+            var output = "\n-------------------------------------------------------------------------------------------------\n  Tweet:\t" + tweetString + "\n\n  Created on:\t" + tweets[i].created_at + "\n\n-------------------------------------------------------------------------------------------------";
+            console.log(output);
+            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", output, function(err) {
+                if (err) {
+                    console.error(err);
+                }
+            });
         }
     },
     tweetFormatter: function(tweet) {
