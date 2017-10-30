@@ -1,5 +1,29 @@
 #!/usr/bin/env node
-
+/**
+ * LiriJS is a language interpretation and recognition interface. It is used in the command line
+ * to display information about movies, songs, and recent tweets. This file is where the core
+ * logic of the application is located. User input is gathered from the command line to determine
+ * what information to request from the APIs that are used by LiriJS. LiriJS makes use of the
+ * OMDB API, the Spotify API, and the Twitter API. LiriJS was built with friendly user interaction
+ * in mind. From v1.0.0 the application includes a help command that displays all important
+ * command information to the user.
+ * 
+ * @summary All logic for LiriJS is included in this single file.
+ * @since 1.0.0
+ * @version 1.0.0
+ * 
+ * Twitter npm module
+ * @link https://www.npmjs.com/package/twitter
+ * Spotify npm module
+ * @link https://www.npmjs.com/package/node-spotify-api
+ * Request npm module
+ * @link https://www.npmjs.com/package/request
+ * Dot-env npm module
+ * @link https://www.npmjs.com/package/dot-env
+ * 
+ * @author Aaron Michael McNulty
+ */
+// Include depended files and libraries.
 var request = require('request');
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
@@ -7,8 +31,19 @@ require('dotenv').config();
 var pjson = require('./package.json');
 var fileSystem = require('fs');
 var keys = require('./keys');
-
+/**
+ * The app object contains all the properties and methods associated with the functionality
+ * of the application.
+ * 
+ * @since 1.0.0
+ */
 var app = {
+    /**
+     * A map of commands and their associated methods.
+     * 
+     * @since 1.0.0
+     * @type {Object}
+     */
     commandMap: {
         'my-tweets': 'tweets',
         'spotify-this-song': 'spotify',
@@ -21,19 +56,48 @@ var app = {
         '-v': 'version',
         '--version': 'version'
     },
+    /** 
+     * The command gathered from the user. 
+     * @type {String}
+     */
     command: process.argv[2],
+    /**
+     * The name information gathered from the user for the movie or song query.
+     * @type {String}
+     */
     nameValue: undefined,
+    /**
+     * The current build version of LiriJS.
+     * @type {String}
+     */
     versionNumber: pjson.version,
+    /**
+     * The id and secret for accessing the Spotify API. This object is needed to use the
+     * node-spotify-api npm module.
+     * @type {Object}
+     */
     spotifyHandle: new Spotify({
         id: '3565b51d290b4bb0aef69db85339f008',
         secret: '633e4f9812c44865bc39e476c13fabcc'
     }),
+    /**
+     * The consumer and access keys and secrets for accessing the Twitter API. This object
+     * is needed to use the twitter npm module.
+     * @type {Object}
+     */
     twitterHandle: new Twitter({
         consumer_key: keys.consumer_key,
         consumer_secret: keys.consumer_secret,
         access_token_key: keys.access_token_key,
         access_token_secret: keys.access_token_secret
     }),
+    /**
+     * Executed by the my-tweets command. Queries the twitter api and calls the
+     * displayTweets method.
+     * 
+     * @since 1.0.0
+     * @fires app.displayTweets
+     */
     tweets: function() {
         var params = {
             exclude_replies: true,
@@ -48,6 +112,12 @@ var app = {
             app.displayTweets(tweets.splice(0,20));
         });
     },
+    /**
+     * Displays the tweets to the console and appends the log.txt file with the information.
+     * 
+     * @since 1.0.0
+     * @param tweets {JSON[]} - Array of twenty tweets from the twitter api.
+     */
     displayTweets: function(tweets) {
         for (var i = 0; i < tweets.length; i++) {
             var tweetString = tweets[i].text;
@@ -61,6 +131,14 @@ var app = {
             });
         }
     },
+    /**
+     * Formats a string by adding a new line at no further than index 80 at the space
+     * nearest to and less than index 80.
+     * 
+     * @since 1.0.0
+     * @param tweet {String} - The string to be formatted.
+     * @returns {String}
+     */
     tweetFormatter: function(tweet) {
         for (var i = 80; i > 0; i--) {
             if (tweet.charAt(i) === ' ') {
@@ -71,6 +149,13 @@ var app = {
             }
         }
     },
+    /**
+     * Executed by the spotify-this-song command. Queries the spotify API then calls
+     * the displaySongInfo method.
+     * 
+     * @since 1.0.0
+     * @fires app.displaySongInfo()
+     */
     spotify: function() {
         var searchObj = {
             type: 'track',
@@ -84,66 +169,58 @@ var app = {
             app.displaySongInfo(data);
         })
     },
+    /**
+     * Displays the song info to the console and to the log.txt file.
+     * 
+     * @param song {JSON} - Song data from the Spotify API
+     */
     displaySongInfo: function(song) {
         try {
-            console.log("\n\nArtist: " + song.tracks.items[0].artists[0].name);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n\nArtist: " + song.tracks.items[0].artists[0].name, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            appendFileWithData("\n\nArtist: ", song.tracks.items[0].artists[0].name);
+            printToConsole("\n\nArtist: ", song.tracks.items[0].artists[0].name);
         }
         catch (e) {
-            console.log("\n\nArtist: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n\nArtist: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            console.log(e);
+            appendFileNoData("\n\nArtist: n/a");
+            printToConsole("\n\nArtist: n/a", '');
         }
         try {
-            console.log("Song Title: " +song.tracks.items[0].name);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nSong Title: " +song.tracks.items[0].name, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            appendFileWithData("Song Title: ", song.tracks.items[0].name);
+            printToConsole("Song Title: ", song.tracks.items[0].name);
         }
         catch (e) {
-            console.log("Song Title: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nSong Title: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            appendFileNoData("Song Title: n/a");
+            printToConsole("Song Title: n/a", '');
         }
         try {
-            console.log("Preview URL: " + song.tracks.items[0].preview_url);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nPreview URL: " + song.tracks.items[0].preview_url, function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            appendFileWithData("Preview URL: ", song.tracks.items[0].preview_url);
+            printToConsole("Preview URL: ", song.tracks.items[0].preview_url);
         }
         catch (e) {
-            console.log("Preview URL: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nPreview URL: n/a", function(err) {
-                if (err) {
-                    console.error(err);
-                }
-            });
+            appendFileNoData("Preview URL: n/a");
+            printToConsole("Preview URL: n/a", '');
         }
+        
         try {
-            console.log("Album Name: " + song.tracks.items[0].album.name);
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nAlbum Name: " + song.tracks.items[0].album.name, function(err) {
+            appendFileWithData("Album Name: ", song.tracks.items[0].album.name);
+            printToConsole("Album Name: ", song.tracks.items[0].album.name);
+        }
+        catch (e) {
+            appendFileNoData("Album Name: n/a");
+            printToConsole("Album Name: n/a", '');
+        }
+        function printToConsole(label, data) {
+            console.log(label + data);
+        }
+        function appendFileNoData(label) {
+            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n" + label, function(err) {
                 if (err) {
                     console.error(err);
                 }
             });
         }
-        catch (e) {
-            console.log("Album Name: n/a");
-            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\nAlbum Name: n/a", function(err) {
+        function appendFileWithData(label, data) {
+            fileSystem.appendFile(process.env.LOG_PATH || "log.txt", "\n" + label + data, function(err) {
                 if (err) {
                     console.error(err);
                 }
@@ -158,7 +235,7 @@ var app = {
         });
     },
     buildUri: function() {
-        if (this.nameValue === undefined) {
+        if (this.nameValue === '') {
             console.log("\n\nYou have not supplied a name value for this command!\n\nTry <node liri.js -help> for information on using this app.");
             process.exit();
         } 
@@ -297,7 +374,13 @@ var app = {
         }
     },
     storedAction: function() {
-        console.log("I DON'T GET IT");
+        fileSystem.readFile('./random.txt', 'utf8', function(err, data) {
+            if (err) {
+                console.error(err);
+            }
+            var commandAndNameArray = data.split(',');
+            app.runCommand(commandAndNameArray[0], commandAndNameArray[1]);
+        });
     },
     help: function() {
         console.log("\n------------------------------------------------------------------------------------------");
@@ -324,12 +407,13 @@ var app = {
                 callback(JSON.parse(body));
             }
         })
+    },
+    runCommand: function(command, value) {
+        app.nameValue = value;
+        app[app.commandMap[command]]();
     }
 }
 
 if (app.command === undefined) console.log("\n\nYou have not specified a command!\n\nTry <node liri.js -help> for information on using this app.");
 else if (app.commandMap[app.command] === undefined) console.log("\n\n" + app.command + " is not a valid command!\n\nTry <node liri.js -help> for information on using this app.");
-else {
-    app.nameValue = process.argv.splice(3, process.argv.length).join(" ");
-    app[app.commandMap[app.command]]();
-}
+else app.runCommand(app.command, process.argv.splice(3, process.argv.length).join(" "));
