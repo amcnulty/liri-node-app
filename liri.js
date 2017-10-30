@@ -20,6 +20,8 @@
  * @link https://www.npmjs.com/package/request
  * Dot-env npm module
  * @link https://www.npmjs.com/package/dot-env
+ * Chalk npm module
+ * @link https://www.npmjs.com/package/chalk
  * 
  * @author Aaron Michael McNulty
  */
@@ -384,7 +386,7 @@ var app = {
         log(labelColor("\nUsage:") + " $ node liri.js [" + optionalColor("command") + "] [" + optionalColor("name value") + "]");
         log(labelColor("\n\nCommands:"));
         log("  -h, --h, -help, --help\t\tDisplay help information.");
-        log("  -v, --version\t\t\t\tDisplays current liri.js version.");
+        log("  -v, --version\t\t\t\tDisplays current LiriJS version.");
         log("  my-tweets\t\t\t\tReturns last twenty tweets from Aaron Michael McNulty.");
         log("  spotify-this-song [" + optionalColor("name value") + "]\tReturns song information for provided name value.");
         log("  movie-this [" + optionalColor("name value") + "]\t\tReturns movie information for provided name value.");
