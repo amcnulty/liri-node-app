@@ -36,6 +36,27 @@ This should print out the latest build version of LiriJS. You should see somethi
   Liri.js v1.1.3
 ```
 
+### Add LiriJS to local npm package [optional]
+LiriJS comes with the option of adding the project as a package to the local npm directory. This allows the user to run the same commands while omitting node and the .js file extension.
+
+To set this up run the following command
+
+```
+$ npm install <directory of liri-node-app>
+```
+
+Now you should be able to run commands as seen in the following examples.
+
+```
+$ liri --version
+```
+
+Will print something like
+
+```
+  Liri.js v1.1.3
+```
+
 ## Usage
 LiriJS comes with only a few commands but it is important to know what they are and how to use them. The commands are listed here and you can also view the commands from the application itself by running the help command.
 
